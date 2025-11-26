@@ -1,0 +1,22 @@
+{
+  "name": "dev-toolbox-asdf",
+  // 干净的基础镜像，所有语言我们自己用 asdf 管理
+  "image": "mcr.microsoft.com/devcontainers/base:debian",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": "true",
+      "installOhMyZsh": "false"
+    },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "remoteUser": "vscode",
+  "workspaceFolder": "/workspaces/dev-toolbox",
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  // 这里的 env 主要给你个人用，团队项目不会用这个 toolbox
+  "containerEnv": {
+    // 你自己的 dotfiles 仓库（可留空，容器里再手动 init 也行）
+    "DOTFILES_REPO": "",
+    // 是否自动为你配置 Neovim + dotfiles
+    "NEOVIM_MODE": "1"
+  }
+}

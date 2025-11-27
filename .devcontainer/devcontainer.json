@@ -1,22 +1,64 @@
 {
-  "name": "dev-toolbox-asdf",
-  // 干净的基础镜像，所有语言我们自己用 asdf 管理
-  "image": "mcr.microsoft.com/devcontainers/base:debian",
-  "features": {
-    "ghcr.io/devcontainers/features/common-utils:2": {
-      "installZsh": "true",
-      "installOhMyZsh": "false"
-    },
-    "ghcr.io/devcontainers/features/git:1": {}
+  "name": "dev-toolbox",
+  // 使用自定义 Dockerfile（已配置国内 apt 源）
+  "build": {
+    "dockerfile": "Dockerfile"
   },
+  "features": {
+    // 基础工具
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "installOhMyZsh": false,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZshConfig": false
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
+    // 语言环境
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/go:1": {},
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21",
+      "installMaven": true,
+      "installGradle": true,
+      "additionalVersions": "8"
+    },
+  },
+  // SSH 挂载
+  "mounts": [
+    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+  ],
   "remoteUser": "vscode",
   "workspaceFolder": "/workspaces/dev-toolbox",
-  "postCreateCommand": "bash .devcontainer/setup.sh",
-  // 这里的 env 主要给你个人用，团队项目不会用这个 toolbox
+  // 容器创建后执行初始化脚本
+  "postCreateCommand": "bash .devcontainer/setup.sh 2>&1 | tee /tmp/setup.log",
+  // 环境变量配置
   "containerEnv": {
-    // 你自己的 dotfiles 仓库（可留空，容器里再手动 init 也行）
+    // 你的 dotfiles 仓库地址（留空则使用 AstroNvim）
     "DOTFILES_REPO": "",
-    // 是否自动为你配置 Neovim + dotfiles
-    "NEOVIM_MODE": "1"
+    // 是否启用 Neovim + dotfiles 配置（1=启用, 0=禁用）
+    "NEOVIM_MODE": "1",
+    // 国内镜像源
+    "GOPROXY": "https://goproxy.cn,direct"
+  },
+  // VS Code 扩展和设置
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // 通用开发
+        "editorconfig.editorconfig",
+        "streetsidesoftware.code-spell-checker",
+        // Git
+        "eamodio.gitlens",
+        "mhutchie.git-graph",
+        // 远程开发
+        "ms-vscode-remote.remote-containers"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2,
+        "files.trimTrailingWhitespace": true
+      }
+    }
   }
 }

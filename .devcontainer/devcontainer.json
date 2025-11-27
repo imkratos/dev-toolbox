@@ -23,9 +23,11 @@
       "additionalVersions": "8"
     },
   },
-  // SSH 挂载
+  // 目录挂载
   "mounts": [
-    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/work,target=/home/vscode/work,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/learn,target=/home/vscode/learn,type=bind,consistency=cached"
   ],
   "remoteUser": "vscode",
   "workspaceFolder": "/workspaces/dev-toolbox",

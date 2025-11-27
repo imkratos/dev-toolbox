@@ -49,6 +49,11 @@ cat > "$USER_HOME/.npmrc" <<'EOF'
 registry=https://registry.npmmirror.com
 EOF
 
+# 安装全局 npm 包
+log_info "安装全局 npm 包"
+npm install -g @anthropic-ai/claude-code || true
+npm install -g @openai/codex || true
+
 
 ##############################################
 # 🍺 安装并配置 Homebrew
@@ -85,16 +90,28 @@ if [ -f "${LINUXBREW_PATH}/bin/brew" ]; then
     "chezmoi"
     "zellij"
     "starship"
+    "lsd"
   )
 
   log_info "安装 Homebrew 软件包: ${BREW_PACKAGES[*]}"
   brew install "${BREW_PACKAGES[@]}" || true
-
-  # 配置 starship
-  ensure_shell_config 'eval "$(starship init zsh)"'
-
   brew cleanup || true
 fi
+
+##############################################
+# ⚙️ Shell 配置
+##############################################
+log_info "配置 Shell 环境"
+
+# 配置 starship
+ensure_shell_config 'eval "$(starship init zsh)"'
+ensure_shell_config 'eval "$(zoxide init --cmd j zsh)"'
+
+# 常用 alias
+ensure_shell_config 'alias vim=nvim'
+ensure_shell_config 'alias ls="lsd"'
+ensure_shell_config 'alias claude="claude --dangerously-skip-permissions"'
+ensure_shell_config 'alias codex="codex --dangerously-bypass-approvals-and-sandbox"'
 
 ##############################################
 # ☕ JDK 版本切换配置
